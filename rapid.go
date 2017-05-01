@@ -1,8 +1,11 @@
 package rapid
 
-import "net/http"
-import "strconv"
-import "fmt"
+import (
+	"fmt"
+	"html/template"
+	"net/http"
+	"strconv"
+)
 
 // Connection - struct for handling http request and write
 type Connection struct {
@@ -16,8 +19,21 @@ type routeHandler func(Connection) string
 func Route(path string, handler routeHandler) {
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		resp := handler(Connection{r, w})
-		fmt.Fprintf(w, resp)
+
+		if resp != "" {
+			fmt.Fprintf(w, resp)
+		}
 	})
+}
+
+func View(w http.ResponseWriter, path string) string {
+	t, err := template.ParseFiles(path)
+	if err != nil {
+		fmt.Println(err)
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	t.Execute(w, nil)
+	return ""
 }
 
 // Start - Start webserver on specified port

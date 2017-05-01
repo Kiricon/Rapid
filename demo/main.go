@@ -7,7 +7,7 @@ import (
 func main() {
 
 	rapid.Route("/", func(c rapid.Connection) string {
-		return "How are you doing?"
+		return rapid.View(c.W, "index.html")
 	})
 
 	rapid.Route("/hello", func(c rapid.Connection) string {
