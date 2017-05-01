@@ -1,6 +1,7 @@
 package rapid
 
 import "net/http"
+import "strconv"
 
 // Connection - struct for handling http request and write
 type Connection struct {
@@ -18,6 +19,7 @@ func Route(path string, handler routeHandler) {
 }
 
 // Start - Start webserver on specified port
-func Start(port string) {
-	http.ListenAndServe(":"+port, nil)
+func Start(port int) {
+	portString := strconv.Itoa(port)
+	http.ListenAndServe(":"+portString, nil)
 }

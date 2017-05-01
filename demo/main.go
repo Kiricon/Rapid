@@ -10,5 +10,5 @@ func main() {
 		fmt.Fprintf(c.W, "Hello World")
 	})
 
-	rapid.Start("3000")
+	rapid.Start(3000)
 }
