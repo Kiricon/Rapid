@@ -36,6 +36,10 @@ func (c *Connection) View(path string) string {
 	return ""
 }
 
+func PublicFolder(path string) {
+	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir(path))))
+}
+
 // StartServer - Start webserver on specified port
 func StartServer(port int) {
 	portString := strconv.Itoa(port)

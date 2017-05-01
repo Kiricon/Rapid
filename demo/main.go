@@ -14,5 +14,7 @@ func main() {
 		return "Testing"
 	})
 
+	PublicFolder("public")
+
 	StartServer(3000)
 }
