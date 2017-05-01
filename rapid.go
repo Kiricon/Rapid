@@ -2,6 +2,7 @@ package rapid
 
 import "net/http"
 import "strconv"
+import "fmt"
 
 // Connection - struct for handling http request and write
 type Connection struct {
@@ -9,12 +10,13 @@ type Connection struct {
 	W http.ResponseWriter
 }
 
-type routeHandler func(Connection)
+type routeHandler func(Connection) string
 
 // Route - Create a route for your webserver
 func Route(path string, handler routeHandler) {
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-		handler(Connection{r, w})
+		resp := handler(Connection{r, w})
+		fmt.Fprintf(w, resp)
 	})
 }
 
