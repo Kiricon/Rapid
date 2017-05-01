@@ -36,8 +36,8 @@ func View(w http.ResponseWriter, path string) string {
 	return ""
 }
 
-// Start - Start webserver on specified port
-func Start(port int) {
+// StartServer - Start webserver on specified port
+func StartServer(port int) {
 	portString := strconv.Itoa(port)
 	http.ListenAndServe(":"+portString, nil)
 }

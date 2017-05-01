@@ -14,5 +14,5 @@ func main() {
 		return "Testing"
 	})
 
-	Start(3000)
+	StartServer(3000)
 }
