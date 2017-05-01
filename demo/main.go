@@ -1,18 +1,18 @@
 package main
 
 import (
-	"rapid"
+	. "rapid"
 )
 
 func main() {
 
-	rapid.Route("/", func(c rapid.Connection) string {
-		return rapid.View(c.W, "index.html")
+	Route("/", func(c Connection) string {
+		return View(c.W, "index.html")
 	})
 
-	rapid.Route("/hello", func(c rapid.Connection) string {
+	Route("/hello", func(c Connection) string {
 		return "Testing"
 	})
 
-	rapid.Start(3000)
+	Start(3000)
 }
