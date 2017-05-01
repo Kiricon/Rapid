@@ -7,7 +7,7 @@ import (
 func main() {
 
 	Route("/", func(c Connection) string {
-		return View(c.W, "index.html")
+		return c.View("index.html")
 	})
 
 	Route("/hello", func(c Connection) string {

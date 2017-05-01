@@ -26,13 +26,13 @@ func Route(path string, handler routeHandler) {
 	})
 }
 
-func View(w http.ResponseWriter, path string) string {
+func (c *Connection) View(path string) string {
 	t, err := template.ParseFiles(path)
 	if err != nil {
 		fmt.Println(err)
 	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	t.Execute(w, nil)
+	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
+	t.Execute(c.W, nil)
 	return ""
 }
 
