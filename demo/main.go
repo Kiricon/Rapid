@@ -4,10 +4,6 @@ import (
 	. "rapid"
 )
 
-type Temp struct {
-	Name string
-}
-
 func main() {
 
 	Route("/", func(c Connection) string {
@@ -16,7 +12,9 @@ func main() {
 
 	Route("/test", func(c Connection) string {
 
-		obj := Temp{"Dominic"}
+		obj := struct {
+			Name string
+		}{"Dominic"}
 		return c.Render("test.html", obj)
 	})
 
