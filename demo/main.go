@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	. "rapid"
 )
 
@@ -15,6 +16,14 @@ func main() {
 		obj := struct {
 			Name string
 		}{"Dominic"}
+		return c.Render("test.html", obj)
+	})
+
+	Route("/blah/:id", func(c Connection) string {
+		fmt.Println(c.Params)
+		obj := struct {
+			Name string
+		}{c.Params["id"]}
 		return c.Render("test.html", obj)
 	})
 
