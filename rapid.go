@@ -75,6 +75,9 @@ func getParamLocations(path string) (map[int]string, string) {
 			routePath = append(routePath[:i], routePath[i+1:]...)
 		}
 	}
-
-	return params, strings.Join(routePath, "/") + "/"
+	newPath := strings.Join(routePath, "/")
+	if len(params) > 0 {
+		newPath += "/"
+	}
+	return params, newPath
 }
