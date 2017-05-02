@@ -18,7 +18,7 @@ func main() {
 		return c.Render("test.html", obj)
 	})
 
-	Route("/blah/:FirstName/:LastName", func(c Connection) string {
+	Route("/hello/:FirstName/:LastName", func(c Connection) string {
 		return c.Render("test2.html", c.Params)
 	})
 
