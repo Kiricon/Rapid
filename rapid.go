@@ -27,12 +27,16 @@ func Route(path string, handler routeHandler) {
 }
 
 func (c *Connection) View(path string) string {
+	return c.Render(path, nil)
+}
+
+func (c *Connection) Render(path string, object interface{}) string {
 	t, err := template.ParseFiles(path)
 	if err != nil {
 		fmt.Println(err)
 	}
 	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
-	t.Execute(c.W, nil)
+	t.Execute(c.W, object)
 	return ""
 }
 
