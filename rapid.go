@@ -17,24 +17,34 @@ type Connection struct {
 
 type routeHandler func(Connection) string
 
+func Get(path string, handler routeHandler) {
+	createRoute(path, handler, "GET")
+}
+
 // Route - Create a route for your webserver
 func Route(path string, handler routeHandler) {
+	createRoute(path, handler, "")
+}
+
+func createRoute(path string, handler routeHandler, method string) {
 	paramLocations, path := getParamLocations(path)
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 
-		requestPath := strings.Split(r.URL.Path, "/")
-		params := map[string]string{}
+		if method == "" || r.Method == method {
+			requestPath := strings.Split(r.URL.Path, "/")
+			params := map[string]string{}
 
-		for i := 0; i < len(requestPath); i++ {
-			if val, ok := paramLocations[i]; ok {
-				params[val] = requestPath[i]
+			for i := 0; i < len(requestPath); i++ {
+				if val, ok := paramLocations[i]; ok {
+					params[val] = requestPath[i]
+				}
 			}
-		}
 
-		resp := handler(Connection{r, w, params})
+			resp := handler(Connection{r, w, params})
 
-		if resp != "" {
-			fmt.Fprintf(w, resp)
+			if resp != "" {
+				fmt.Fprintf(w, resp)
+			}
 		}
 	})
 }
