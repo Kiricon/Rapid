@@ -21,6 +21,18 @@ func Get(path string, handler routeHandler) {
 	createRoute(path, handler, "GET")
 }
 
+func POST(path string, handler routeHandler) {
+	createRoute(path, handler, "POST")
+}
+
+func PUT(path string, handler routeHandler) {
+	createRoute(path, handler, "PUT")
+}
+
+func DELETE(path string, handler routeHandler) {
+	createRoute(path, handler, "DELETE")
+}
+
 // Route - Create a route for your webserver
 func Route(path string, handler routeHandler) {
 	createRoute(path, handler, "")
