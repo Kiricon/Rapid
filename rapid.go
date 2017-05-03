@@ -14,10 +14,12 @@ type Connection struct {
 	Params map[string]string
 }
 
+// View - Render HTML view without templating
 func (c *Connection) View(path string) string {
 	return c.Render(path, nil)
 }
 
+// Render - Render HTML view with templating
 func (c *Connection) Render(path string, object interface{}) string {
 	t, err := template.ParseFiles(path)
 	if err != nil {
@@ -28,6 +30,7 @@ func (c *Connection) Render(path string, object interface{}) string {
 	return ""
 }
 
+// PublicFolder - Specify application public/static folder
 func PublicFolder(path string) {
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir(path))))
 }
