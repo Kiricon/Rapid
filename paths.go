@@ -37,7 +37,7 @@ func insertPath(paths map[string]path, pathArr []string, index int) {
 		insertPath(paths, pathArr, index+1)
 	} else {
 		emptySlice := make(map[string]path)
-		paths[pathArr[index]] = path{pathArr[index], emptySlice}
+		paths[pathArr[index]] = path{strings.Join(pathArr, ""), emptySlice}
 
 		if index+1 < len(pathArr) {
 			insertPath(paths[pathArr[index]].subPaths, pathArr, index+1)

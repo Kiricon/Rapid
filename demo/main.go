@@ -31,4 +31,5 @@ func main() {
 		r.StartServer(3000)
 	*/
 	r.AddPath("/hello/world/")
+	r.AddPath("/hello/world/hotdog")
 }
