@@ -32,4 +32,5 @@ func main() {
 	*/
 	r.AddPath("/hello/world/")
 	r.AddPath("/hello/world/hotdog")
+	r.AddPath("/test/:Name/")
 }

@@ -33,14 +33,25 @@ func AddPath(pathString string) {
 
 func insertPath(paths map[string]path, pathArr []string, index int) {
 
-	if _, ok := paths[pathArr[index]]; ok && index+1 < len(pathArr) {
+	singlePath := pathArr[index]
+	if len(singlePath) > 1 {
+		if singlePath[0] == ':' {
+			if singlePath[len(singlePath)-1] == '/' {
+				singlePath = "*/"
+			} else {
+				singlePath = "*"
+			}
+		}
+	}
+
+	if _, ok := paths[singlePath]; ok && index+1 < len(pathArr) {
 		insertPath(paths, pathArr, index+1)
 	} else {
 		emptySlice := make(map[string]path)
-		paths[pathArr[index]] = path{strings.Join(pathArr, ""), emptySlice}
+		paths[singlePath] = path{strings.Join(pathArr, ""), emptySlice}
 
 		if index+1 < len(pathArr) {
-			insertPath(paths[pathArr[index]].subPaths, pathArr, index+1)
+			insertPath(paths[singlePath].subPaths, pathArr, index+1)
 		}
 
 	}
