@@ -34,13 +34,18 @@ func (c *Connection) Render(path string, object interface{}) {
 	t.Execute(c.W, object)
 }
 
+// Redirect - Redirect a request to another rest end point
+func (c *Connection) Redirect(path string) {
+	http.Redirect(c.W, c.R, path, 301)
+}
+
 // StaticFolder - Specify application public/static folder
 func StaticFolder(path string, dir string) {
 	http.Handle("/"+path+"/", http.StripPrefix("/"+path+"/", http.FileServer(http.Dir(dir))))
 }
 
-// StartServer - Start webserver on specified port
-func StartServer(port int) {
+// Listen - Start webserver on specified port
+func Listen(port int) {
 	portString := strconv.Itoa(port)
 	http.ListenAndServe(":"+portString, nil)
 }

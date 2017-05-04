@@ -26,9 +26,13 @@ func main() {
 		c.Send("Testing")
 	})
 
+	r.Route("/blah", func(c r.Connection) {
+		c.Redirect("/hello")
+	})
+
 	r.StaticFolder("static", "public")
 
-	r.StartServer(3000)
+	r.Listen(3000)
 
 	/*
 		r.AddPath("/hello/world/")
