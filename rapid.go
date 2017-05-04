@@ -14,6 +14,7 @@ type Connection struct {
 	Params map[string]string
 }
 
+// Send - Return string back to user
 func (c *Connection) Send(message string) {
 	fmt.Fprintf(c.W, message)
 }
