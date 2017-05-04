@@ -14,20 +14,23 @@ type Connection struct {
 	Params map[string]string
 }
 
+func (c *Connection) Send(message string) {
+	fmt.Fprintf(c.W, message)
+}
+
 // View - Render HTML view without templating
-func (c *Connection) View(path string) string {
-	return c.Render(path, nil)
+func (c *Connection) View(path string) {
+	c.Render(path, nil)
 }
 
 // Render - Render HTML view with templating
-func (c *Connection) Render(path string, object interface{}) string {
+func (c *Connection) Render(path string, object interface{}) {
 	t, err := template.ParseFiles(path)
 	if err != nil {
 		fmt.Println(err)
 	}
 	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
 	t.Execute(c.W, object)
-	return ""
 }
 
 // StaticFolder - Specify application public/static folder

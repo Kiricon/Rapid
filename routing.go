@@ -1,12 +1,11 @@
 package rapid
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
 
-type routeHandler func(Connection) string
+type routeHandler func(Connection)
 
 // Get - Create http GET rest endpoint
 func Get(path string, handler routeHandler) {
@@ -47,11 +46,8 @@ func createRoute(path string, handler routeHandler, method string) {
 				}
 			}
 
-			resp := handler(Connection{r, w, params})
+			handler(Connection{r, w, params})
 
-			if resp != "" {
-				fmt.Fprintf(w, resp)
-			}
 		}
 	})
 }
