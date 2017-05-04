@@ -1,16 +1,16 @@
 package main
 
 import (
-	. "rapid"
+	r "rapid"
 )
 
 func main() {
 
-	Get("/", func(c Connection) string {
+	r.Get("/", func(c r.Connection) string {
 		return c.View("index.html")
 	})
 
-	Route("/test", func(c Connection) string {
+	r.Route("/test", func(c r.Connection) string {
 
 		obj := struct {
 			Name string
@@ -18,15 +18,15 @@ func main() {
 		return c.Render("test.html", obj)
 	})
 
-	Route("/hello/:FirstName/:LastName", func(c Connection) string {
+	r.Route("/hello/:FirstName/:LastName", func(c r.Connection) string {
 		return c.Render("test2.html", c.Params)
 	})
 
-	Route("/hello", func(c Connection) string {
+	r.Route("/hello", func(c r.Connection) string {
 		return "Testing"
 	})
 
-	StaticFolder("static", "public")
+	r.StaticFolder("static", "public")
 
-	StartServer(3000)
+	r.StartServer(3000)
 }
