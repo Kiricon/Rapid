@@ -30,9 +30,9 @@ func (c *Connection) Render(path string, object interface{}) string {
 	return ""
 }
 
-// PublicFolder - Specify application public/static folder
-func PublicFolder(path string) {
-	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir(path))))
+// StaticFolder - Specify application public/static folder
+func StaticFolder(path string, dir string) {
+	http.Handle("/"+path+"/", http.StripPrefix("/"+path+"/", http.FileServer(http.Dir(dir))))
 }
 
 // StartServer - Start webserver on specified port

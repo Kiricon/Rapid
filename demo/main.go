@@ -26,7 +26,7 @@ func main() {
 		return "Testing"
 	})
 
-	PublicFolder("public")
+	StaticFolder("static", "public")
 
 	StartServer(3000)
 }
