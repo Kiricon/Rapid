@@ -25,7 +25,7 @@ import (
 
 func main() {
 
-	r.Get("/", func(c r.Connection) {
+    r.Get("/", func(c r.Connection) {
         c.Send("Hello World")
     })
 
