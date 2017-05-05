@@ -12,6 +12,7 @@ type path struct {
 
 var paths map[string]path
 
+// AddPath - Add route to the map of paths
 func AddPath(pathString string) {
 	pathArr := strings.Split(pathString, "/")
 	//loop := true
