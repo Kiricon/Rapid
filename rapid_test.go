@@ -11,4 +11,10 @@ func TestAddPath(t *testing.T) {
 	if _, ok := paths["/"].subPaths["Hello/"].subPaths["World"]; !ok {
 		t.Error("Sub paths not building correctly")
 	}
+
+	AddPath("/Hello/:World")
+
+	if _, ok := paths["/"].subPaths["Hello/"].subPaths["*"]; !ok {
+		t.Error("Sub paths not working with wild cards")
+	}
 }

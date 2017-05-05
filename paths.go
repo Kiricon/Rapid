@@ -1,7 +1,6 @@
 package rapid
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -28,7 +27,6 @@ func AddPath(pathString string) {
 	}
 
 	insertPath(paths, pathArr, 0)
-	fmt.Println(paths)
 
 }
 
@@ -46,7 +44,7 @@ func insertPath(paths map[string]path, pathArr []string, index int) {
 	}
 
 	if _, ok := paths[singlePath]; ok && index+1 < len(pathArr) {
-		insertPath(paths, pathArr, index+1)
+		insertPath(paths[singlePath].subPaths, pathArr, index+1)
 	} else {
 		emptySlice := make(map[string]path)
 		paths[singlePath] = path{strings.Join(pathArr, ""), emptySlice}
