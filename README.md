@@ -1,6 +1,8 @@
 <h1 align="center">Rapid</h1>
 
 [![Build Status](https://travis-ci.org/Kiricon/Rapid.svg?branch=master)](https://travis-ci.org/Kiricon/Rapid)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Kiricon/Rapid)](https://goreportcard.com/report/github.com/Kiricon/Rapid)
+[![GoDoc](https://godoc.org/github.com/gin-gonic/gin?status.svg)](https://godoc.org/github.com/Kiricon/Rapid)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <p align="center">
