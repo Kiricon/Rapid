@@ -1,7 +1,7 @@
 package main
 
 import (
-	r "rapid"
+	r "github.com/Kiricon/Rapid"
 )
 
 func main() {
