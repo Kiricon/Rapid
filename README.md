@@ -1,6 +1,6 @@
-<div style="text-align: center">
-    <img src="https://github.com/Kiricon/Rapid/blob/master/demo/public/imgs/logo.png?raw=true" height="200">
-</div>
+<p align="center">
+    <img src="https://github.com/Kiricon/Rapid/blob/master/demo/public/imgs/logo.png?raw=true" height="200" />
+</p>
 
 [![Build Status](https://travis-ci.org/Kiricon/Rapid.svg?branch=master)](https://travis-ci.org/Kiricon/Rapid)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Kiricon/Rapid)](https://goreportcard.com/report/github.com/Kiricon/Rapid)
