@@ -1,5 +1,5 @@
 <div style="text-align: center">
-    <img src="http://i.imgur.com/ps5kqyt.png" height="200">
+    <img src="https://github.com/Kiricon/Rapid/blob/master/demo/public/imgs/logo.png?raw=true" height="200">
 </div>
 
 [![Build Status](https://travis-ci.org/Kiricon/Rapid.svg?branch=master)](https://travis-ci.org/Kiricon/Rapid)
