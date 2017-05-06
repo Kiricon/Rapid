@@ -1,4 +1,6 @@
-<h1 align="center">Rapid</h1>
+<div style="text-align: center">
+    <img src="http://i.imgur.com/ps5kqyt.png" height="200">
+</div>
 
 [![Build Status](https://travis-ci.org/Kiricon/Rapid.svg?branch=master)](https://travis-ci.org/Kiricon/Rapid)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Kiricon/Rapid)](https://goreportcard.com/report/github.com/Kiricon/Rapid)
