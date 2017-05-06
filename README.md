@@ -12,14 +12,15 @@ Rapid is a lightweight micro-framework built for quickly developing webservers a
 With a syntax and routing system inspired by Express.js, Flask & Laravel, developing end points is easy to pick up. 
 </p>
 
-<h2 align="center">Install Rapid</h3>
+<br/>
 
+<h2 align="center">Install Rapid</h2>
 <p align="center">
-<code>go get https://github.com/Kiricon/Rapid</code>
+<code align="center">go get https://github.com/Kiricon/Rapid</code>
 </p>
 
-
-<h2 align="center">Hello World</h3>
+<br/>
+<h2 align="center">Hello World</h2>
 
 ```Go
 package main
