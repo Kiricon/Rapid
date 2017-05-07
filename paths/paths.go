@@ -33,15 +33,7 @@ func AddPath(pathString string) {
 func insertPath(paths map[string]path, pathArr []string, index int) {
 
 	singlePath := pathArr[index]
-	if len(singlePath) > 1 {
-		if singlePath[0] == ':' {
-			if singlePath[len(singlePath)-1] == '/' {
-				singlePath = "*/"
-			} else {
-				singlePath = "*"
-			}
-		}
-	}
+	singlePath = checkPathParams(singlePath)
 
 	if _, ok := paths[singlePath]; ok && index+1 < len(pathArr) {
 		insertPath(paths[singlePath].subPaths, pathArr, index+1)
@@ -55,4 +47,20 @@ func insertPath(paths map[string]path, pathArr []string, index int) {
 
 	}
 
+}
+
+// Check if the current path directory is a url parameter
+// If it is then replace it with  * wild card
+func checkPathParams(singlePath string) string {
+	if len(singlePath) > 1 {
+		if singlePath[0] == ':' {
+			if singlePath[len(singlePath)-1] == '/' {
+				singlePath = "*/"
+			} else {
+				singlePath = "*"
+			}
+		}
+	}
+
+	return singlePath
 }
