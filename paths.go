@@ -19,6 +19,7 @@ var PathHandlers map[string]map[string]func(Connection)
 // AddPath - Add route to the map of paths
 func AddPath(pathString string, handler func(Connection), method string) {
 
+	pathString = strings.ToLower(pathString)
 	pathArr := formatPath(pathString)
 
 	if Paths == nil {
@@ -85,6 +86,7 @@ func checkPathParams(singlePath string) string {
 
 // FindCorrectPath - Find the correct path to asscociate with a request url
 func FindCorrectPath(path string, method string) string {
+	path = strings.ToLower(path)
 	pathArr := formatPath(path)
 	currentPath := Paths
 	lastMatch := "/"
