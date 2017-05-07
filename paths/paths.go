@@ -78,6 +78,29 @@ func checkPathParams(singlePath string) string {
 	return singlePath
 }
 
-func findCorrectPath(path string) {
+// Find the correct path to asscociate with a request url
+func findCorrectPath(path string) string {
+	pathArr := formatPath(path)
+	currentPath := paths
+	lastMatch := "/"
+
+	for i := 0; i < len(pathArr); i++ {
+		dir := pathArr[i]
+
+		if _, ok := currentPath[dir]; ok {
+			lastMatch = currentPath[dir].path
+			currentPath = currentPath[dir].subPaths
+		} else if _, ok := currentPath["*"]; ok {
+			lastMatch = currentPath["*"].path
+			currentPath = currentPath["*"].subPaths
+		} else if _, ok := currentPath["*/"]; ok {
+			lastMatch = currentPath["*/"].path
+			currentPath = currentPath["*/"].subPaths
+		} else {
+			return "404 No Match"
+		}
+	}
+
+	return lastMatch
 
 }
