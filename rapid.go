@@ -3,6 +3,7 @@ package rapid
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -45,7 +46,16 @@ func StaticFolder(path string, dir string) {
 }
 
 // Listen - Start webserver on specified port
-func Listen(port int) {
+func Listen(port int) *http.Server {
 	portString := strconv.Itoa(port)
-	http.ListenAndServe(":"+portString, nil)
+	srv := &http.Server{Addr: ":" + portString}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			// cannot panic, because this probably is an intentional close
+			log.Printf("Httpserver: ListenAndServe() error: %s", err)
+		}
+	}()
+
+	return srv
 }

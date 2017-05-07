@@ -1,6 +1,10 @@
 package rapid
 
-import "testing"
+import (
+	"net/http"
+	"testing"
+	"time"
+)
 
 func TestServer(t *testing.T) {
 	Get("/", func(c Connection) {
@@ -32,4 +36,32 @@ func TestServer(t *testing.T) {
 	})
 
 	StaticFolder("static", "public")
+
+	server := Listen(3000)
+
+	_, gerr := http.NewRequest("GET", "/", nil)
+	if gerr != nil {
+		t.Fatal(gerr)
+	}
+
+	_, puterr := http.NewRequest("PUT", "/put", nil)
+	if puterr != nil {
+		t.Fatal(puterr)
+	}
+
+	_, posterr := http.NewRequest("POST", "/post", nil)
+	if posterr != nil {
+		t.Fatal(posterr)
+	}
+
+	_, deleteerr := http.NewRequest("DELETE", "/Delete", nil)
+	if deleteerr != nil {
+		t.Fatal(deleteerr)
+	}
+
+	time.Sleep(10 * time.Second)
+
+	if err := server.Shutdown(nil); err != nil {
+		panic(err) // failure/timeout shutting down the server gracefully
+	}
 }
