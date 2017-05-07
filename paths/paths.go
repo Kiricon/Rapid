@@ -3,8 +3,6 @@ package paths
 import (
 	"strings"
 
-	"fmt"
-
 	"github.com/Kiricon/Rapid"
 )
 
@@ -99,11 +97,9 @@ func findCorrectPath(path string) string {
 			lastMatch = currentPath["*/"].path
 			currentPath = currentPath["*/"].subPaths
 		} else {
-			fmt.Println("404")
-			return "404 No Match"
+			return "404"
 		}
 	}
-	fmt.Println(lastMatch)
 	return lastMatch
 
 }
