@@ -3,6 +3,8 @@ package paths
 import (
 	"testing"
 
+	"fmt"
+
 	"github.com/Kiricon/Rapid"
 )
 
@@ -11,20 +13,10 @@ func TestAddPath(t *testing.T) {
 	if len(paths) != 1 {
 		t.Error("Path not added")
 	}
-
-	if _, ok := paths["/"].subPaths["Hello/"].subPaths["World"]; !ok {
-		t.Error("Sub paths not building correctly")
-	}
-
 	AddPath("/Hello/:World", func(c rapid.Connection) {})
-
-	if _, ok := paths["/"].subPaths["Hello/"].subPaths["*"]; !ok {
-		t.Error("Sub paths not working with wild cards")
-	}
-
 	AddPath("/Foo/:Bar/", func(c rapid.Connection) {})
 
-	if _, ok := paths["/"].subPaths["Foo/"].subPaths["*/"]; !ok {
-		t.Error("Sub paths not working with wild cards")
-	}
+	fmt.Println("/Hello/World :" + findCorrectPath("/Hello/World"))
+	fmt.Println("/Hello/Foo :" + findCorrectPath("/Hello/Foo"))
+	fmt.Println("/Foo/Baz :" + findCorrectPath("/Foo/Baz"))
 }
