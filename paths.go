@@ -14,7 +14,7 @@ type path struct {
 var Paths map[string]path
 
 // PathHandlers - All path handler's keyed by their path string
-var PathHandlers map[string]func(Connection)
+var PathHandlers map[string]map[string]func(Connection)
 
 // AddPath - Add route to the map of paths
 func AddPath(pathString string, handler func(Connection), method string) {
@@ -23,11 +23,14 @@ func AddPath(pathString string, handler func(Connection), method string) {
 
 	if Paths == nil {
 		Paths = make(map[string]path)
-		PathHandlers = make(map[string]func(Connection))
+		PathHandlers = make(map[string]map[string]func(Connection))
 	}
 
 	insertPath(Paths, pathArr, 0, method)
-	PathHandlers[pathString] = handler
+	if PathHandlers[pathString] == nil {
+		PathHandlers[pathString] = make(map[string]func(Connection))
+	}
+	PathHandlers[pathString][method] = handler
 
 }
 
@@ -85,31 +88,23 @@ func FindCorrectPath(path string, method string) string {
 	pathArr := formatPath(path)
 	currentPath := Paths
 	lastMatch := "/"
-	lastMethod := "ALL"
 
 	for i := 0; i < len(pathArr); i++ {
 		dir := pathArr[i]
 
 		if _, ok := currentPath[dir]; ok {
 			lastMatch = currentPath[dir].path
-			lastMethod = currentPath[dir].method
 			currentPath = currentPath[dir].subPaths
 		} else if _, ok := currentPath["*"]; ok {
 			lastMatch = currentPath["*"].path
-			lastMethod = currentPath["*"].method
 			currentPath = currentPath["*"].subPaths
 		} else if _, ok := currentPath["*/"]; ok {
 			lastMatch = currentPath["*/"].path
-			lastMethod = currentPath["*/"].method
 			currentPath = currentPath["*/"].subPaths
 		} else {
 			return "404"
 		}
 	}
 
-	if lastMethod == "ALL" || lastMethod == method {
-		return lastMatch
-	}
-
-	return "404"
+	return lastMatch
 }

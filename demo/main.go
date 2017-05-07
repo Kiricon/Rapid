@@ -22,6 +22,10 @@ func main() {
 		c.Send("Put page")
 	})
 
+	r.Get("/Put", func(c r.Connection) {
+		c.Send("Put page - Accessed from GET")
+	})
+
 	r.Get("/hello/:FirstName/:LastName", func(c r.Connection) {
 		c.Render("test2.html", c.Params)
 	})

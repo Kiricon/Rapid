@@ -47,7 +47,14 @@ func createPaths() {
 		correctPath := FindCorrectPath(r.URL.Path, r.Method)
 		if correctPath != "404" {
 			params := getParams(correctPath, r.URL.Path)
-			PathHandlers[correctPath](Connection{R: r, W: w, Params: params})
+
+			if _, ok := PathHandlers[correctPath][r.Method]; ok {
+				PathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params})
+			} else if _, ok := PathHandlers[correctPath]["ALL"]; ok {
+				PathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params})
+			} else {
+				fmt.Fprintf(w, "404 Not Found")
+			}
 		} else {
 			fmt.Fprintf(w, "404 Not Found")
 		}
