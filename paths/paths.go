@@ -2,6 +2,8 @@ package paths
 
 import (
 	"strings"
+
+	"github.com/Kiricon/Rapid"
 )
 
 type path struct {
@@ -10,9 +12,10 @@ type path struct {
 }
 
 var paths map[string]path
+var pathHandlers map[string]func(rapid.Connection)
 
 // AddPath - Add route to the map of paths
-func AddPath(pathString string) {
+func AddPath(pathString string, handler func(rapid.Connection)) {
 	pathArr := strings.Split(pathString, "/")
 	//loop := true
 
@@ -27,9 +30,11 @@ func AddPath(pathString string) {
 	}
 
 	insertPath(paths, pathArr, 0)
+	pathHandlers[pathString] = handler
 
 }
 
+// Insert a path in to the global paths map
 func insertPath(paths map[string]path, pathArr []string, index int) {
 
 	singlePath := pathArr[index]
@@ -50,7 +55,7 @@ func insertPath(paths map[string]path, pathArr []string, index int) {
 }
 
 // Check if the current path directory is a url parameter
-// If it is then replace it with  * wild card
+// If it is a param then replace it with  * wild card
 func checkPathParams(singlePath string) string {
 	if len(singlePath) > 1 {
 		if singlePath[0] == ':' {
