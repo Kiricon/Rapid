@@ -72,6 +72,8 @@ func ListenAndWait(port int, wait bool) {
 	}
 }
 
+// ShutdownServer - Gracefully shut down the server and unblock
+// the server thread.
 func ShutdownServer() {
 	wg.Done()
 	if err := srv.Shutdown(nil); err != nil {
