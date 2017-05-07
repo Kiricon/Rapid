@@ -1,4 +1,4 @@
-package rapid
+package paths
 
 import (
 	"strings"
