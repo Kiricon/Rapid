@@ -22,6 +22,10 @@ func main() {
 		c.Render("test2.html", c.Params)
 	})
 
+	r.Route("/hello/foo/bar", func(c r.Connection) {
+		c.Render("test2.html", map[string]string{"FirstName": "Dominic", "LastName": "Balance"})
+	})
+
 	r.Route("/hello", func(c r.Connection) {
 		c.Send("Testing")
 	})
