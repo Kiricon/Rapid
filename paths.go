@@ -19,7 +19,6 @@ var PathHandlers map[string]map[string]func(Connection)
 // AddPath - Add route to the map of paths
 func AddPath(pathString string, handler func(Connection), method string) {
 
-	pathString = strings.ToLower(pathString)
 	pathArr := formatPath(pathString)
 
 	if Paths == nil {
@@ -53,6 +52,7 @@ func insertPath(paths map[string]path, pathArr []string, index int, method strin
 
 	singlePath := pathArr[index]
 	singlePath = checkPathParams(singlePath)
+	singlePath = strings.ToLower(singlePath)
 
 	if _, ok := paths[singlePath]; ok && index+1 < len(pathArr) {
 		insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
