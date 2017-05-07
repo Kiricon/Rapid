@@ -14,6 +14,9 @@ Rapid is a lightweight micro-framework built for quickly developing webservers a
 With a syntax and routing system inspired by Express.js, Flask & Laravel, developing end points is easy to pick up. 
 </p>
 
+
+
+
 <br/>
 
 <h2 align="center">Install Rapid</h2>
@@ -22,7 +25,9 @@ With a syntax and routing system inspired by Express.js, Flask & Laravel, develo
 </p>
 
 <br/>
-<h2 align="center">Hello World</h2>
+
+
+# Hello World
 
 ```Go
 package main
@@ -40,3 +45,11 @@ func main() {
 	r.Listen(3000)
 }
 ```
+
+## Features
+
+- Routing
+- Url parameters
+- Templating
+- Static file serving
+- Zero Dependencies (Only standard Library calls)
