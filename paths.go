@@ -1,9 +1,7 @@
-package paths
+package rapid
 
 import (
 	"strings"
-
-	"github.com/Kiricon/Rapid"
 )
 
 type path struct {
@@ -11,21 +9,24 @@ type path struct {
 	subPaths map[string]path
 }
 
-var paths map[string]path
-var pathHandlers map[string]func(rapid.Connection)
+// Paths - All paths recrusively registered
+var Paths map[string]path
+
+// PathHandlers - All path handler's keyed by their path string
+var PathHandlers map[string]func(Connection)
 
 // AddPath - Add route to the map of paths
-func AddPath(pathString string, handler func(rapid.Connection)) {
+func AddPath(pathString string, handler func(Connection)) {
 
 	pathArr := formatPath(pathString)
 
-	if paths == nil {
-		paths = make(map[string]path)
-		pathHandlers = make(map[string]func(rapid.Connection))
+	if Paths == nil {
+		Paths = make(map[string]path)
+		PathHandlers = make(map[string]func(Connection))
 	}
 
-	insertPath(paths, pathArr, 0)
-	pathHandlers[pathString] = handler
+	insertPath(Paths, pathArr, 0)
+	PathHandlers[pathString] = handler
 
 }
 
@@ -78,10 +79,10 @@ func checkPathParams(singlePath string) string {
 	return singlePath
 }
 
-// Find the correct path to asscociate with a request url
-func findCorrectPath(path string) string {
+// FindCorrectPath - Find the correct path to asscociate with a request url
+func FindCorrectPath(path string) string {
 	pathArr := formatPath(path)
-	currentPath := paths
+	currentPath := Paths
 	lastMatch := "/"
 
 	for i := 0; i < len(pathArr); i++ {

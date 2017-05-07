@@ -1,7 +1,6 @@
 package rapid
 
 import (
-	"net/http"
 	"strings"
 )
 
@@ -33,26 +32,28 @@ func Route(path string, handler routeHandler) {
 }
 
 func createRoute(path string, handler routeHandler, method string) {
-	paramLocations, path := getParamLocations(path)
-	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+	//paramLocations, path := getParamLocations(path)
+	AddPath(path, handler)
+	/*
+		http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 
-		if method == "" || r.Method == method {
-			requestPath := strings.Split(r.URL.Path, "/")
-			params := map[string]string{}
+			if method == "" || r.Method == method {
+				requestPath := strings.Split(r.URL.Path, "/")
+				params := map[string]string{}
 
-			for i := 0; i < len(requestPath); i++ {
-				if val, ok := paramLocations[i]; ok {
-					params[val] = requestPath[i]
+				for i := 0; i < len(requestPath); i++ {
+					if val, ok := paramLocations[i]; ok {
+						params[val] = requestPath[i]
+					}
 				}
+
+				handler(Connection{r, w, params})
+
 			}
-
-			handler(Connection{r, w, params})
-
-		}
-	})
+		}) */
 }
 
-func getParamLocations(path string) (map[int]string, string) {
+func getParamLocations(path string) map[int]string {
 
 	routePath := strings.Split(path, "/")
 
@@ -68,5 +69,5 @@ func getParamLocations(path string) (map[int]string, string) {
 	if len(params) > 0 {
 		newPath += "/"
 	}
-	return params, newPath
+	return params
 }

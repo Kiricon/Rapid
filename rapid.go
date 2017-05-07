@@ -1,46 +1,15 @@
 package rapid
 
 import (
-	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 )
 
 var wg sync.WaitGroup
 var srv *http.Server
-
-// Connection - struct for handling http request and write
-type Connection struct {
-	R      *http.Request
-	W      http.ResponseWriter
-	Params map[string]string
-}
-
-// Send - Return plain text string back to http request
-func (c *Connection) Send(message string) {
-	fmt.Fprintf(c.W, message)
-}
-
-// View - Render HTML view without templating
-func (c *Connection) View(path string) {
-	c.Render(path, nil)
-}
-
-// Render - Render HTML view with templating
-// Templating uses standard library templating
-func (c *Connection) Render(path string, object interface{}) {
-	t, _ := template.ParseFiles(path)
-	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
-	t.Execute(c.W, object)
-}
-
-// Redirect - Redirect a request to another rest end point
-func (c *Connection) Redirect(path string) {
-	http.Redirect(c.W, c.R, path, 301)
-}
 
 // StaticFolder - Specify application public/static folder
 func StaticFolder(path string, dir string) {
@@ -58,7 +27,7 @@ func Listen(port int) {
 func ListenAndWait(port int, wait bool) {
 	portString := strconv.Itoa(port)
 	srv = &http.Server{Addr: ":" + portString}
-
+	createPaths()
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
 			// cannot panic, because this probably is an intentional close
@@ -70,6 +39,24 @@ func ListenAndWait(port int, wait bool) {
 	if wait {
 		wg.Wait()
 	}
+}
+
+func createPaths() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		correctPath := FindCorrectPath(r.URL.Path)
+		if correctPath != "404" {
+			paramLocations := getParamLocations(r.URL.Path)
+			requestPath := strings.Split(r.URL.Path, "/")
+			params := map[string]string{}
+
+			for i := 0; i < len(requestPath); i++ {
+				if val, ok := paramLocations[i]; ok {
+					params[val] = requestPath[i]
+				}
+			}
+			PathHandlers[correctPath](Connection{R: r, W: w, Params: params})
+		}
+	})
 }
 
 // ShutdownServer - Gracefully shut down the server and unblock
