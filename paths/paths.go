@@ -16,6 +16,20 @@ var pathHandlers map[string]func(rapid.Connection)
 
 // AddPath - Add route to the map of paths
 func AddPath(pathString string, handler func(rapid.Connection)) {
+
+	pathArr := formatPath(pathString)
+
+	if paths == nil {
+		paths = make(map[string]path)
+		pathHandlers = make(map[string]func(rapid.Connection))
+	}
+
+	insertPath(paths, pathArr, 0)
+	pathHandlers[pathString] = handler
+
+}
+
+func formatPath(pathString string) []string {
 	pathArr := strings.Split(pathString, "/")
 	//loop := true
 
@@ -25,13 +39,7 @@ func AddPath(pathString string, handler func(rapid.Connection)) {
 		}
 	}
 
-	if paths == nil {
-		paths = make(map[string]path)
-	}
-
-	insertPath(paths, pathArr, 0)
-	pathHandlers[pathString] = handler
-
+	return pathArr
 }
 
 // Insert a path in to the global paths map
@@ -68,4 +76,8 @@ func checkPathParams(singlePath string) string {
 	}
 
 	return singlePath
+}
+
+func findCorrectPath(path string) {
+
 }
