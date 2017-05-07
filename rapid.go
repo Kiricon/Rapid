@@ -44,10 +44,12 @@ func ListenAndWait(port int, wait bool) {
 
 func createPaths() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		correctPath := FindCorrectPath(r.URL.Path)
+		correctPath := FindCorrectPath(r.URL.Path, r.Method)
 		if correctPath != "404" {
 			params := getParams(correctPath, r.URL.Path)
 			PathHandlers[correctPath](Connection{R: r, W: w, Params: params})
+		} else {
+			fmt.Fprintf(w, "404 Not Found")
 		}
 	})
 }
@@ -63,7 +65,6 @@ func getParams(path string, rPath string) map[string]string {
 				params[val] = requestPath[i]
 			}
 		}
-		fmt.Println(params)
 	}
 
 	return params

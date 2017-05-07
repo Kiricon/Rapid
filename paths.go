@@ -6,6 +6,7 @@ import (
 
 type path struct {
 	path     string
+	method   string
 	subPaths map[string]path
 }
 
@@ -16,7 +17,7 @@ var Paths map[string]path
 var PathHandlers map[string]func(Connection)
 
 // AddPath - Add route to the map of paths
-func AddPath(pathString string, handler func(Connection)) {
+func AddPath(pathString string, handler func(Connection), method string) {
 
 	pathArr := formatPath(pathString)
 
@@ -25,7 +26,7 @@ func AddPath(pathString string, handler func(Connection)) {
 		PathHandlers = make(map[string]func(Connection))
 	}
 
-	insertPath(Paths, pathArr, 0)
+	insertPath(Paths, pathArr, 0, method)
 	PathHandlers[pathString] = handler
 
 }
@@ -44,19 +45,19 @@ func formatPath(pathString string) []string {
 }
 
 // Insert a path in to the global paths map
-func insertPath(paths map[string]path, pathArr []string, index int) {
+func insertPath(paths map[string]path, pathArr []string, index int, method string) {
 
 	singlePath := pathArr[index]
 	singlePath = checkPathParams(singlePath)
 
 	if _, ok := paths[singlePath]; ok && index+1 < len(pathArr) {
-		insertPath(paths[singlePath].subPaths, pathArr, index+1)
+		insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
 	} else {
 		emptySlice := make(map[string]path)
-		paths[singlePath] = path{strings.Join(pathArr, ""), emptySlice}
+		paths[singlePath] = path{strings.Join(pathArr, ""), method, emptySlice}
 
 		if index+1 < len(pathArr) {
-			insertPath(paths[singlePath].subPaths, pathArr, index+1)
+			insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
 		}
 
 	}
@@ -80,27 +81,35 @@ func checkPathParams(singlePath string) string {
 }
 
 // FindCorrectPath - Find the correct path to asscociate with a request url
-func FindCorrectPath(path string) string {
+func FindCorrectPath(path string, method string) string {
 	pathArr := formatPath(path)
 	currentPath := Paths
 	lastMatch := "/"
+	lastMethod := "ALL"
 
 	for i := 0; i < len(pathArr); i++ {
 		dir := pathArr[i]
 
 		if _, ok := currentPath[dir]; ok {
 			lastMatch = currentPath[dir].path
+			lastMethod = currentPath[dir].method
 			currentPath = currentPath[dir].subPaths
 		} else if _, ok := currentPath["*"]; ok {
 			lastMatch = currentPath["*"].path
+			lastMethod = currentPath["*"].method
 			currentPath = currentPath["*"].subPaths
 		} else if _, ok := currentPath["*/"]; ok {
 			lastMatch = currentPath["*/"].path
+			lastMethod = currentPath["*/"].method
 			currentPath = currentPath["*/"].subPaths
 		} else {
 			return "404"
 		}
 	}
-	return lastMatch
 
+	if lastMethod == "ALL" || lastMethod == method {
+		return lastMatch
+	}
+
+	return "404"
 }

@@ -28,29 +28,11 @@ func Delete(path string, handler routeHandler) {
 
 // Route - Create a route for your webserver
 func Route(path string, handler routeHandler) {
-	createRoute(path, handler, "")
+	createRoute(path, handler, "ALL")
 }
 
 func createRoute(path string, handler routeHandler, method string) {
-	//paramLocations, path := getParamLocations(path)
-	AddPath(path, handler)
-	/*
-		http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-
-			if method == "" || r.Method == method {
-				requestPath := strings.Split(r.URL.Path, "/")
-				params := map[string]string{}
-
-				for i := 0; i < len(requestPath); i++ {
-					if val, ok := paramLocations[i]; ok {
-						params[val] = requestPath[i]
-					}
-				}
-
-				handler(Connection{r, w, params})
-
-			}
-		}) */
+	AddPath(path, handler, method)
 }
 
 func getParamLocations(path string) map[int]string {

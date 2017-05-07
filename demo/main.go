@@ -18,7 +18,11 @@ func main() {
 		c.Render("test.html", obj)
 	})
 
-	r.Route("/hello/:FirstName/:LastName", func(c r.Connection) {
+	r.Put("/Put", func(c r.Connection) {
+		c.Send("Put page")
+	})
+
+	r.Get("/hello/:FirstName/:LastName", func(c r.Connection) {
 		c.Render("test2.html", c.Params)
 	})
 
