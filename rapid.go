@@ -6,7 +6,11 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 )
+
+var wg sync.WaitGroup
+var srv *http.Server
 
 // Connection - struct for handling http request and write
 type Connection struct {
@@ -46,9 +50,14 @@ func StaticFolder(path string, dir string) {
 // Listen - Start webserver on specified port
 // Returns the instance of the http server currently runing.
 // You can use this instance to shutdown the server if need be.
-func Listen(port int) *http.Server {
+func Listen(port int) {
+	ListenAndWait(port, true)
+}
+
+// ListenAndWait - Gives user option of waiting for server or not
+func ListenAndWait(port int, wait bool) {
 	portString := strconv.Itoa(port)
-	srv := &http.Server{Addr: ":" + portString}
+	srv = &http.Server{Addr: ":" + portString}
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
@@ -57,5 +66,15 @@ func Listen(port int) *http.Server {
 		}
 	}()
 
-	return srv
+	wg.Add(1)
+	if wait {
+		wg.Wait()
+	}
+}
+
+func ShutdownServer() {
+	wg.Done()
+	if err := srv.Shutdown(nil); err != nil {
+		panic(err) // failure/timeout shutting down the server gracefully
+	}
 }

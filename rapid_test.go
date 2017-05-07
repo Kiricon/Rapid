@@ -42,7 +42,7 @@ func TestServer(t *testing.T) {
 
 	StaticFolder("static", "public")
 
-	server := Listen(3000)
+	ListenAndWait(3000, false)
 
 	_, gerr := http.Get("http://localhost:3000/")
 	if gerr != nil {
@@ -76,7 +76,5 @@ func TestServer(t *testing.T) {
 
 	time.Sleep(3 * time.Second)
 
-	if err := server.Shutdown(nil); err != nil {
-		panic(err) // failure/timeout shutting down the server gracefully
-	}
+	ShutdownServer()
 }

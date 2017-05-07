@@ -33,10 +33,4 @@ func main() {
 	r.StaticFolder("static", "public")
 
 	r.Listen(3000)
-
-	/*
-		r.AddPath("/hello/world/")
-		r.AddPath("/hello/world/hotdog")
-		r.AddPath("/test/:Name/")
-	*/
 }
