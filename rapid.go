@@ -15,7 +15,7 @@ type Connection struct {
 	Params map[string]string
 }
 
-// Send - Return string back to user
+// Send - Return plain text string back to http request
 func (c *Connection) Send(message string) {
 	fmt.Fprintf(c.W, message)
 }
@@ -26,6 +26,7 @@ func (c *Connection) View(path string) {
 }
 
 // Render - Render HTML view with templating
+// Templating uses standard library templating
 func (c *Connection) Render(path string, object interface{}) {
 	t, _ := template.ParseFiles(path)
 	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -43,6 +44,8 @@ func StaticFolder(path string, dir string) {
 }
 
 // Listen - Start webserver on specified port
+// Returns the instance of the http server currently runing.
+// You can use this instance to shutdown the server if need be.
 func Listen(port int) *http.Server {
 	portString := strconv.Itoa(port)
 	srv := &http.Server{Addr: ":" + portString}
