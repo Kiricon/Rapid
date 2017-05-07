@@ -1,6 +1,7 @@
 package rapid
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -45,18 +46,27 @@ func createPaths() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		correctPath := FindCorrectPath(r.URL.Path)
 		if correctPath != "404" {
-			paramLocations := getParamLocations(r.URL.Path)
-			requestPath := strings.Split(r.URL.Path, "/")
-			params := map[string]string{}
-
-			for i := 0; i < len(requestPath); i++ {
-				if val, ok := paramLocations[i]; ok {
-					params[val] = requestPath[i]
-				}
-			}
+			params := getParams(correctPath, r.URL.Path)
 			PathHandlers[correctPath](Connection{R: r, W: w, Params: params})
 		}
 	})
+}
+
+func getParams(path string, rPath string) map[string]string {
+	paramLocations := getParamLocations(path)
+	requestPath := strings.Split(rPath, "/")
+	params := map[string]string{}
+
+	if len(paramLocations) > 0 {
+		for i := 0; i < len(requestPath); i++ {
+			if val, ok := paramLocations[i]; ok {
+				params[val] = requestPath[i]
+			}
+		}
+		fmt.Println(params)
+	}
+
+	return params
 }
 
 // ShutdownServer - Gracefully shut down the server and unblock
