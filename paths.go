@@ -1,6 +1,8 @@
 package rapid
 
 import (
+	"fmt"
+	"net/http"
 	"strings"
 )
 
@@ -15,6 +17,32 @@ var Paths map[string]path
 
 // PathHandlers - All path handler's keyed by their path string
 var PathHandlers map[string]map[string]func(Connection)
+
+type fileServerPath struct {
+	path string
+	dir  string
+}
+
+var fileServerPaths []fileServerPath
+
+// AddStaticPath - Add a static file server path
+func AddStaticPath(path string, dir string) {
+
+	if fileServerPaths == nil {
+		fileServerPaths = []fileServerPath{}
+	}
+
+	fileServerPaths = append(fileServerPaths, fileServerPath{path, dir})
+}
+
+func StaticServerHandler(sPath fileServerPath) func(Connection) {
+	return func(c Connection) {
+		dirPath := strings.Replace(c.R.URL.Path, sPath.path, "", 1)
+		dirPath = sPath.dir + "/" + dirPath
+		fmt.Println(dirPath)
+		http.ServeFile(c.W, c.R, dirPath)
+	}
+}
 
 // AddPath - Add route to the map of paths
 func AddPath(pathString string, handler func(Connection), method string) {
@@ -109,4 +137,16 @@ func FindCorrectPath(path string, method string) string {
 	}
 
 	return lastMatch
+}
+
+func FindStaticServer(path string) fileServerPath {
+
+	for i := 0; i < len(fileServerPaths); i++ {
+		sPath := fileServerPaths[i].path
+		if path[0:len(sPath)] == sPath {
+			return fileServerPaths[i]
+		}
+	}
+
+	return fileServerPath{"", ""}
 }

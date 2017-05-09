@@ -14,7 +14,7 @@ var srv *http.Server
 
 // StaticFolder - Specify application public/static folder
 func StaticFolder(path string, dir string) {
-	http.Handle("/"+path+"/", http.StripPrefix("/"+path+"/", http.FileServer(http.Dir(dir))))
+	AddStaticPath(path, dir)
 }
 
 // Listen - Start webserver on specified port
@@ -53,10 +53,20 @@ func createPaths() {
 			} else if _, ok := PathHandlers[correctPath]["ALL"]; ok {
 				PathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params})
 			} else {
-				fmt.Fprintf(w, "404 Not Found")
+				fileServer := FindStaticServer(r.URL.Path)
+				if fileServer.path != "" {
+					StaticServerHandler(fileServer)(Connection{R: r, W: w})
+				} else {
+					fmt.Fprintf(w, "404 Not Found - 1")
+				}
 			}
 		} else {
-			fmt.Fprintf(w, "404 Not Found")
+			fileServer := FindStaticServer(r.URL.Path)
+			if fileServer.path != "" {
+				StaticServerHandler(fileServer)(Connection{R: r, W: w})
+			} else {
+				fmt.Fprintf(w, "404 Not Found - 2")
+			}
 		}
 	})
 }
