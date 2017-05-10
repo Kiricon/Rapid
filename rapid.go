@@ -24,11 +24,40 @@ func Listen(port int) {
 	ListenAndWait(port, true)
 }
 
+type rapidHandler struct{}
+
+func (h rapidHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	correctPath := FindCorrectPath(r.URL.Path, r.Method)
+	if correctPath != "404" {
+		params := getParams(correctPath, r.URL.Path)
+
+		if _, ok := PathHandlers[correctPath][r.Method]; ok {
+			PathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params})
+		} else if _, ok := PathHandlers[correctPath]["ALL"]; ok {
+			PathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params})
+		} else {
+			fileServer := FindStaticServer(r.URL.Path)
+			if fileServer.path != "" {
+				StaticServerHandler(fileServer)(Connection{R: r, W: w})
+			} else {
+				fmt.Fprintf(w, "404 Not Found - 1")
+			}
+		}
+	} else {
+		fileServer := FindStaticServer(r.URL.Path)
+		if fileServer.path != "" {
+			StaticServerHandler(fileServer)(Connection{R: r, W: w})
+		} else {
+			fmt.Fprintf(w, "404 Not Found - 2")
+		}
+	}
+}
+
 // ListenAndWait - Gives user option of waiting for server or not
 func ListenAndWait(port int, wait bool) {
 	portString := strconv.Itoa(port)
-	srv = &http.Server{Addr: ":" + portString}
-	createPaths()
+	srv = &http.Server{Addr: ":" + portString, Handler: rapidHandler{}}
+
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
 			// cannot panic, because this probably is an intentional close
@@ -40,35 +69,6 @@ func ListenAndWait(port int, wait bool) {
 	if wait {
 		wg.Wait()
 	}
-}
-
-func createPaths() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		correctPath := FindCorrectPath(r.URL.Path, r.Method)
-		if correctPath != "404" {
-			params := getParams(correctPath, r.URL.Path)
-
-			if _, ok := PathHandlers[correctPath][r.Method]; ok {
-				PathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params})
-			} else if _, ok := PathHandlers[correctPath]["ALL"]; ok {
-				PathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params})
-			} else {
-				fileServer := FindStaticServer(r.URL.Path)
-				if fileServer.path != "" {
-					StaticServerHandler(fileServer)(Connection{R: r, W: w})
-				} else {
-					fmt.Fprintf(w, "404 Not Found - 1")
-				}
-			}
-		} else {
-			fileServer := FindStaticServer(r.URL.Path)
-			if fileServer.path != "" {
-				StaticServerHandler(fileServer)(Connection{R: r, W: w})
-			} else {
-				fmt.Fprintf(w, "404 Not Found - 2")
-			}
-		}
-	})
 }
 
 func getParams(path string, rPath string) map[string]string {
