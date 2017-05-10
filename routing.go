@@ -1,10 +1,11 @@
 package rapid
 
 import (
-	"strings"
+	"github.com/Kiricon/Rapid/connection"
+	"github.com/Kiricon/Rapid/mux"
 )
 
-type routeHandler func(Connection)
+type routeHandler func(connection.Connection)
 
 // Get - Create http GET rest endpoint
 func Get(path string, handler routeHandler) {
@@ -32,24 +33,5 @@ func Route(path string, handler routeHandler) {
 }
 
 func createRoute(path string, handler routeHandler, method string) {
-	AddPath(path, handler, method)
-}
-
-func getParamLocations(path string) map[int]string {
-
-	routePath := strings.Split(path, "/")
-
-	params := map[int]string{}
-	for i := (len(routePath) - 1); i >= 0; i-- {
-		dir := routePath[i]
-		if dir != "" && dir[0] == ':' {
-			params[i] = dir[1:len(routePath[i])]
-			routePath = append(routePath[:i], routePath[i+1:]...)
-		}
-	}
-	newPath := strings.Join(routePath, "/")
-	if len(params) > 0 {
-		newPath += "/"
-	}
-	return params
+	mux.AddPath(path, handler, method)
 }

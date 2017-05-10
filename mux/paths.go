@@ -1,9 +1,11 @@
-package rapid
+package mux
 
 import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/Kiricon/Rapid/connection"
 )
 
 type path struct {
@@ -16,7 +18,7 @@ type path struct {
 var Paths map[string]path
 
 // PathHandlers - All path handler's keyed by their path string
-var PathHandlers map[string]map[string]func(Connection)
+var PathHandlers map[string]map[string]func(connection.Connection)
 
 type fileServerPath struct {
 	path string
@@ -35,8 +37,8 @@ func AddStaticPath(path string, dir string) {
 	fileServerPaths = append(fileServerPaths, fileServerPath{path, dir})
 }
 
-func StaticServerHandler(sPath fileServerPath) func(Connection) {
-	return func(c Connection) {
+func StaticServerHandler(sPath fileServerPath) func(connection.Connection) {
+	return func(c connection.Connection) {
 		dirPath := strings.Replace(c.R.URL.Path, sPath.path, "", 1)
 		dirPath = sPath.dir + "/" + dirPath
 		fmt.Println(dirPath)
@@ -45,18 +47,18 @@ func StaticServerHandler(sPath fileServerPath) func(Connection) {
 }
 
 // AddPath - Add route to the map of paths
-func AddPath(pathString string, handler func(Connection), method string) {
+func AddPath(pathString string, handler func(connection.Connection), method string) {
 
 	pathArr := formatPath(pathString)
 
 	if Paths == nil {
 		Paths = make(map[string]path)
-		PathHandlers = make(map[string]map[string]func(Connection))
+		PathHandlers = make(map[string]map[string]func(connection.Connection))
 	}
 
 	insertPath(Paths, pathArr, 0, method)
 	if PathHandlers[pathString] == nil {
-		PathHandlers[pathString] = make(map[string]func(Connection))
+		PathHandlers[pathString] = make(map[string]func(connection.Connection))
 	}
 	PathHandlers[pathString][method] = handler
 
