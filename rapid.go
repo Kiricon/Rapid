@@ -6,11 +6,52 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/Kiricon/Rapid/connection"
 	"github.com/Kiricon/Rapid/mux"
 )
 
 var wg sync.WaitGroup
 var srv *http.Server
+
+type routeHandler func(connection.Connection)
+
+type Server struct {
+	Paths        map[string]mux.Path
+	PathHandlers map[string]map[string]func(connection.Connection)
+}
+
+func App() Server {
+	return Server{}
+}
+
+// Get - Create http GET rest endpoint
+func (s *Server) Get(path string, handler routeHandler) {
+	createRoute(path, handler, "GET")
+}
+
+// Post - Create http POST rest endpoint
+func (s *Server) Post(path string, handler routeHandler) {
+	createRoute(path, handler, "POST")
+}
+
+// Put - Create http PUT rest endpoint
+func (s *Server) Put(path string, handler routeHandler) {
+	createRoute(path, handler, "PUT")
+}
+
+// Delete - Create http DELETE rest endpoint
+func (s *Server) Delete(path string, handler routeHandler) {
+	createRoute(path, handler, "DELETE")
+}
+
+// Route - Create a route for your webserver
+func (s *Server) Route(path string, handler routeHandler) {
+	createRoute(path, handler, "ALL")
+}
+
+func (s *Server) createRoute(path string, handler routeHandler, method string) {
+	mux.AddPath(path, handler, method)
+}
 
 // StaticFolder - Specify application public/static folder
 func StaticFolder(path string, dir string) {
