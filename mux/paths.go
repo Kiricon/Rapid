@@ -8,10 +8,10 @@ import (
 	"github.com/Kiricon/Rapid/connection"
 )
 
-type path struct {
+type Path struct {
 	path     string
 	method   string
-	subPaths map[string]path
+	subPaths map[string]Path
 }
 
 // Paths - All paths recrusively registered
