@@ -1,4 +1,4 @@
-package connection
+package rapid
 
 import (
 	"fmt"

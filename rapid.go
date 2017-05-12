@@ -6,18 +6,16 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/Kiricon/Rapid/connection"
 	"github.com/Kiricon/Rapid/mux"
 )
-
-var wg sync.WaitGroup
-var srv *http.Server
 
 type routeHandler func(connection.Connection)
 
 type Server struct {
-	Paths        map[string]mux.Path
-	PathHandlers map[string]map[string]func(connection.Connection)
+	paths        map[string]mux.Path
+	pathHandlers map[string]map[string]func(connection.Connection)
+	srv          *http.Server
+	wg           sync.WaitGroup
 }
 
 func App() Server {
@@ -54,40 +52,40 @@ func (s *Server) createRoute(path string, handler routeHandler, method string) {
 }
 
 // StaticFolder - Specify application public/static folder
-func StaticFolder(path string, dir string) {
+func (s *Server) StaticFolder(path string, dir string) {
 	mux.AddStaticPath(path, dir)
 }
 
 // Listen - Start webserver on specified port
 // Returns the instance of the http server currently runing.
 // You can use this instance to shutdown the server if need be.
-func Listen(port int) {
+func (s *Server) Listen(port int) {
 	ListenAndWait(port, true)
 }
 
 // ListenAndWait - Gives user option of waiting for server or not
-func ListenAndWait(port int, wait bool) {
+func (s *Server) ListenAndWait(port int, wait bool) {
 	portString := strconv.Itoa(port)
-	srv = &http.Server{Addr: ":" + portString, Handler: mux.RapidHandler{}}
+	s.srv = &http.Server{Addr: ":" + portString, Handler: mux.RapidHandler{}}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil {
+		if err := s.srv.ListenAndServe(); err != nil {
 			// cannot panic, because this probably is an intentional close
 			log.Printf("Httpserver: ListenAndServe() error: %s", err)
 		}
 	}()
 
-	wg.Add(1)
+	s.wg.Add(1)
 	if wait {
-		wg.Wait()
+		s.wg.Wait()
 	}
 }
 
 // ShutdownServer - Gracefully shut down the server and unblock
 // the server thread.
-func ShutdownServer() {
+func (s *Server) Shutdown() {
 	wg.Done()
-	if err := srv.Shutdown(nil); err != nil {
+	if err := s.srv.Shutdown(nil); err != nil {
 		panic(err) // failure/timeout shutting down the server gracefully
 	}
 }

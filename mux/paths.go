@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
-	"github.com/Kiricon/Rapid/connection"
 )
 
 type Path struct {
