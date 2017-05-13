@@ -43,6 +43,9 @@ func TestServer(t *testing.T) {
 
 	app.StaticFolder("/static/", "./demo/public")
 
+	app.NotFoundMessage("Not found here boi")
+	app.NotFoundPage("404.html")
+
 	app.ListenAndWait(3000, false)
 
 	_, gerr := http.Get("http://localhost:3000/")
