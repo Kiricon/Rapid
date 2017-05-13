@@ -41,6 +41,10 @@ func TestServer(t *testing.T) {
 		c.Redirect("/hello")
 	})
 
+	app.Route("/wrong/wrong", func(c Connection) {
+		c.NotFound()
+	})
+
 	app.StaticFolder("/static/", "./demo/public")
 
 	app.NotFoundMessage("Not found here boi")

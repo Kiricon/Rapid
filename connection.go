@@ -42,6 +42,7 @@ func (c *Connection) NotFound() {
 	if c.server.notFoundPage != "" {
 		http.ServeFile(c.W, c.R, c.server.notFoundPage)
 	} else {
+		c.W.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(c.W, c.server.notFoundMessage)
 	}
 }
