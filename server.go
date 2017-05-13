@@ -94,6 +94,7 @@ func (s *Server) Listen(port int) {
 // ListenAndWait - Gives user option of waiting for server or not
 func (s *Server) ListenAndWait(port int, wait bool) {
 	portString := strconv.Itoa(port)
+	s.handler.server = s
 	s.srv = &http.Server{Addr: ":" + portString, Handler: s.handler}
 
 	go func() {

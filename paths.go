@@ -1,7 +1,6 @@
 package rapid
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -31,7 +30,6 @@ func (s *Server) staticServerHandler(sPath fileServerPath) func(Connection) {
 	return func(c Connection) {
 		dirPath := strings.Replace(c.R.URL.Path, sPath.path, "", 1)
 		dirPath = sPath.dir + "/" + dirPath
-		fmt.Println(dirPath)
 		http.ServeFile(c.W, c.R, dirPath)
 	}
 }
