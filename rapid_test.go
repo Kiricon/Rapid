@@ -41,7 +41,7 @@ func TestServer(t *testing.T) {
 		c.Redirect("/hello")
 	})
 
-	app.StaticFolder("static", "./demo/public")
+	app.StaticFolder("/static/", "./demo/public")
 
 	app.ListenAndWait(3000, false)
 
