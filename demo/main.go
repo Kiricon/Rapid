@@ -47,7 +47,8 @@ func main() {
 	})
 
 	//app.StaticFolder("/", "public")
-
+	app.NotFoundMessage("Not found here boi")
+	app.NotFoundPage("404.html")
 	app.ListenAndWait(3000, false)
 
 	app2 := rapid.App()

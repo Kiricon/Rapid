@@ -39,5 +39,9 @@ func (c *Connection) Redirect(path string) {
 
 // NotFound - Return 404 message to user
 func (c *Connection) NotFound() {
-	fmt.Fprintf(c.W, c.server.notFoundMessage)
+	if c.server.notFoundPage != "" {
+		http.ServeFile(c.W, c.R, c.server.notFoundPage)
+	} else {
+		fmt.Fprintf(c.W, c.server.notFoundMessage)
+	}
 }

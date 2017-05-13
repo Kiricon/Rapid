@@ -49,6 +49,7 @@ type Server struct {
 	handler         rapidHandler
 	fileServerPaths []fileServerPath
 	notFoundMessage string
+	notFoundPage    string
 }
 
 // Get - Create http GET rest endpoint
@@ -119,4 +120,14 @@ func (s *Server) Shutdown() {
 	if err := s.srv.Shutdown(nil); err != nil {
 		panic(err) // failure/timeout shutting down the server gracefully
 	}
+}
+
+// NotFoundMessage - Set the 404 message that users will see
+func (s *Server) NotFoundMessage(message string) {
+	s.notFoundMessage = message
+}
+
+// NotFoundPage - Set page to use for not found message
+func (s *Server) NotFoundPage(path string) {
+	s.notFoundPage = path
 }
