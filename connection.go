@@ -1,6 +1,7 @@
 package rapid
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -11,6 +12,7 @@ type Connection struct {
 	R      *http.Request
 	W      http.ResponseWriter
 	Params map[string]string
+	Json   interface{}
 	server *Server
 }
 
@@ -45,4 +47,16 @@ func (c *Connection) NotFound() {
 		c.W.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(c.W, c.server.notFoundMessage)
 	}
+}
+
+// SendJSON - Send json string back to client
+func (c *Connection) SendJSON(object interface{}) {
+	obj := &object
+	j, err := json.Marshal(obj)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	c.W.Header().Set("Content-Type", "application/json")
+	c.Send(string(j))
 }

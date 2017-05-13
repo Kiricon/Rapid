@@ -1,6 +1,7 @@
 package rapid
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,11 +18,18 @@ func (h rapidHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	correctPath := h.server.findCorrectPath(r.URL.Path, r.Method)
 	if correctPath != "404" {
 		params := getParams(correctPath, r.URL.Path)
-
+		var jsonObject interface{}
+		if r.Header.Get("Content-Type") == "application/json" {
+			err := json.NewDecoder(r.Body).Decode(&jsonObject)
+			if err != nil {
+				http.Error(w, err.Error(), 400)
+				return
+			}
+		}
 		if _, ok := h.server.pathHandlers[correctPath][r.Method]; ok {
-			h.server.pathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params, server: h.server})
+			h.server.pathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params, server: h.server, Json: jsonObject})
 		} else if _, ok := h.server.pathHandlers[correctPath]["ALL"]; ok {
-			h.server.pathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params, server: h.server})
+			h.server.pathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params, server: h.server, Json: jsonObject})
 		} else {
 			fileServer := h.server.findStaticServer(r.URL.Path)
 			if fileServer.path != "" {
