@@ -42,7 +42,7 @@ func main() {
 		c.Redirect("/hello")
 	})
 
-	app.StaticFolder("/", "public")
+	//app.StaticFolder("/", "public")
 
 	app.Listen(3000)
 }

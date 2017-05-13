@@ -1,6 +1,7 @@
 package rapid
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -38,7 +39,7 @@ func (s *Server) staticServerHandler(sPath fileServerPath) func(Connection) {
 func (s *Server) addPath(pathString string, handler func(Connection), method string) {
 
 	pathArr := formatPath(pathString)
-
+	fmt.Println(pathArr)
 	if s.paths == nil {
 		s.paths = make(map[string]path)
 		s.pathHandlers = make(map[string]map[string]func(Connection))
@@ -76,7 +77,7 @@ func (s *Server) insertPath(paths map[string]path, pathArr []string, index int, 
 		s.insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
 	} else {
 		emptySlice := make(map[string]path)
-		s.paths[singlePath] = path{strings.Join(pathArr, ""), method, emptySlice}
+		paths[singlePath] = path{strings.Join(pathArr, ""), method, emptySlice}
 
 		if index+1 < len(pathArr) {
 			s.insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
