@@ -1,70 +1,100 @@
-package types
+package rapid
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"sync"
-
-	"github.com/Kiricon/Rapid/connection"
-	"github.com/Kiricon/Rapid/mux"
 )
 
-type routeHandler func(connection.Connection)
+type routeHandler func(Connection)
+type rapidHandler struct {
+	server *Server
+}
+
+func (h rapidHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	correctPath := h.server.findCorrectPath(r.URL.Path, r.Method)
+	if correctPath != "404" {
+		params := getParams(correctPath, r.URL.Path)
+
+		if _, ok := h.server.pathHandlers[correctPath][r.Method]; ok {
+			h.server.pathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params})
+		} else if _, ok := h.server.pathHandlers[correctPath]["ALL"]; ok {
+			h.server.pathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params})
+		} else {
+			fileServer := h.server.findStaticServer(r.URL.Path)
+			if fileServer.path != "" {
+				h.server.staticServerHandler(fileServer)(Connection{R: r, W: w})
+			} else {
+				fmt.Fprintf(w, "404 Not Found - 1")
+			}
+		}
+	} else {
+		fileServer := h.server.findStaticServer(r.URL.Path)
+		if fileServer.path != "" {
+			h.server.staticServerHandler(fileServer)(Connection{R: r, W: w})
+		} else {
+			fmt.Fprintf(w, "404 Not Found - 2")
+		}
+	}
+}
 
 // Server - Individual instance of a rapid server
 type Server struct {
-	paths        map[string]mux.Path
-	pathHandlers map[string]map[string]func(connection.Connection)
-	srv          *http.Server
-	wg           sync.WaitGroup
+	paths           map[string]path
+	pathHandlers    map[string]map[string]func(Connection)
+	srv             *http.Server
+	wg              sync.WaitGroup
+	handler         rapidHandler
+	fileServerPaths []fileServerPath
 }
 
 // Get - Create http GET rest endpoint
 func (s *Server) Get(path string, handler routeHandler) {
-	createRoute(path, handler, "GET")
+	s.createRoute(path, handler, "GET")
 }
 
 // Post - Create http POST rest endpoint
 func (s *Server) Post(path string, handler routeHandler) {
-	createRoute(path, handler, "POST")
+	s.createRoute(path, handler, "POST")
 }
 
 // Put - Create http PUT rest endpoint
 func (s *Server) Put(path string, handler routeHandler) {
-	createRoute(path, handler, "PUT")
+	s.createRoute(path, handler, "PUT")
 }
 
 // Delete - Create http DELETE rest endpoint
 func (s *Server) Delete(path string, handler routeHandler) {
-	createRoute(path, handler, "DELETE")
+	s.createRoute(path, handler, "DELETE")
 }
 
 // Route - Create a route for your webserver
 func (s *Server) Route(path string, handler routeHandler) {
-	createRoute(path, handler, "ALL")
+	s.createRoute(path, handler, "ALL")
 }
 
 func (s *Server) createRoute(path string, handler routeHandler, method string) {
-	mux.AddPath(path, handler, method)
+	s.addPath(path, handler, method)
 }
 
 // StaticFolder - Specify application public/static folder
 func (s *Server) StaticFolder(path string, dir string) {
-	mux.AddStaticPath(path, dir)
+	s.addStaticPath(path, dir)
 }
 
 // Listen - Start webserver on specified port
 // Returns the instance of the http server currently runing.
 // You can use this instance to shutdown the server if need be.
 func (s *Server) Listen(port int) {
-	ListenAndWait(port, true)
+	s.ListenAndWait(port, true)
 }
 
 // ListenAndWait - Gives user option of waiting for server or not
 func (s *Server) ListenAndWait(port int, wait bool) {
 	portString := strconv.Itoa(port)
-	s.srv = &http.Server{Addr: ":" + portString, Handler: mux.RapidHandler{}}
+	s.srv = &http.Server{Addr: ":" + portString, Handler: s.handler}
 
 	go func() {
 		if err := s.srv.ListenAndServe(); err != nil {

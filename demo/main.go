@@ -1,17 +1,16 @@
 package main
 
-import (
-	r "github.com/Kiricon/Rapid"
-	"github.com/Kiricon/Rapid/connection"
-)
+import rapid "github.com/Kiricon/Rapid"
 
 func main() {
 
-	r.Get("/", func(c connection.Connection) {
+	app := rapid.App()
+
+	app.Get("/", func(c rapid.Connection) {
 		c.View("index.html")
 	})
 
-	r.Route("/test", func(c connection.Connection) {
+	app.Route("/test", func(c rapid.Connection) {
 
 		obj := struct {
 			Name string
@@ -19,31 +18,31 @@ func main() {
 		c.Render("test.html", obj)
 	})
 
-	r.Put("/Put", func(c connection.Connection) {
+	app.Put("/Put", func(c rapid.Connection) {
 		c.Send("Put page")
 	})
 
-	r.Get("/Put", func(c connection.Connection) {
+	app.Get("/Put", func(c rapid.Connection) {
 		c.Send("Put page - Accessed from GET")
 	})
 
-	r.Get("/hello/:FirstName/:LastName", func(c connection.Connection) {
+	app.Get("/hello/:FirstName/:LastName", func(c rapid.Connection) {
 		c.Render("test2.html", c.Params)
 	})
 
-	r.Route("/hello/foo/bar", func(c connection.Connection) {
+	app.Route("/hello/foo/bar", func(c rapid.Connection) {
 		c.Render("test2.html", map[string]string{"FirstName": "Dominic", "LastName": "Balance"})
 	})
 
-	r.Route("/hello", func(c connection.Connection) {
+	app.Route("/hello", func(c rapid.Connection) {
 		c.Send("Testing")
 	})
 
-	r.Route("/blah", func(c connection.Connection) {
+	app.Route("/blah", func(c rapid.Connection) {
 		c.Redirect("/hello")
 	})
 
-	r.StaticFolder("/", "public")
+	app.StaticFolder("/", "public")
 
-	r.Listen(3000)
+	app.Listen(3000)
 }

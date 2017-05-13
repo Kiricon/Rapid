@@ -1,4 +1,4 @@
-package mux
+package rapid
 
 import (
 	"fmt"
@@ -6,37 +6,29 @@ import (
 	"strings"
 )
 
-type Path struct {
+type path struct {
 	path     string
 	method   string
-	subPaths map[string]Path
+	subPaths map[string]path
 }
-
-// Paths - All paths recrusively registered
-var Paths map[string]path
-
-// PathHandlers - All path handler's keyed by their path string
-var PathHandlers map[string]map[string]func(connection.Connection)
 
 type fileServerPath struct {
 	path string
 	dir  string
 }
 
-var fileServerPaths []fileServerPath
-
 // AddStaticPath - Add a static file server path
-func AddStaticPath(path string, dir string) {
+func (s *Server) addStaticPath(path string, dir string) {
 
-	if fileServerPaths == nil {
-		fileServerPaths = []fileServerPath{}
+	if s.fileServerPaths == nil {
+		s.fileServerPaths = []fileServerPath{}
 	}
 
-	fileServerPaths = append(fileServerPaths, fileServerPath{path, dir})
+	s.fileServerPaths = append(s.fileServerPaths, fileServerPath{path, dir})
 }
 
-func StaticServerHandler(sPath fileServerPath) func(connection.Connection) {
-	return func(c connection.Connection) {
+func (s *Server) staticServerHandler(sPath fileServerPath) func(Connection) {
+	return func(c Connection) {
 		dirPath := strings.Replace(c.R.URL.Path, sPath.path, "", 1)
 		dirPath = sPath.dir + "/" + dirPath
 		fmt.Println(dirPath)
@@ -45,20 +37,20 @@ func StaticServerHandler(sPath fileServerPath) func(connection.Connection) {
 }
 
 // AddPath - Add route to the map of paths
-func AddPath(pathString string, handler func(connection.Connection), method string) {
+func (s *Server) addPath(pathString string, handler func(Connection), method string) {
 
 	pathArr := formatPath(pathString)
 
-	if Paths == nil {
-		Paths = make(map[string]path)
-		PathHandlers = make(map[string]map[string]func(connection.Connection))
+	if s.paths == nil {
+		s.paths = make(map[string]path)
+		s.pathHandlers = make(map[string]map[string]func(Connection))
 	}
 
-	insertPath(Paths, pathArr, 0, method)
-	if PathHandlers[pathString] == nil {
-		PathHandlers[pathString] = make(map[string]func(connection.Connection))
+	s.insertPath(s.paths, pathArr, 0, method)
+	if s.pathHandlers[pathString] == nil {
+		s.pathHandlers[pathString] = make(map[string]func(Connection))
 	}
-	PathHandlers[pathString][method] = handler
+	s.pathHandlers[pathString][method] = handler
 
 }
 
@@ -76,20 +68,20 @@ func formatPath(pathString string) []string {
 }
 
 // Insert a path in to the global paths map
-func insertPath(paths map[string]path, pathArr []string, index int, method string) {
+func (s *Server) insertPath(paths map[string]path, pathArr []string, index int, method string) {
 
 	singlePath := pathArr[index]
 	singlePath = checkPathParams(singlePath)
 	singlePath = strings.ToLower(singlePath)
 
 	if _, ok := paths[singlePath]; ok && index+1 < len(pathArr) {
-		insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
+		s.insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
 	} else {
 		emptySlice := make(map[string]path)
-		paths[singlePath] = path{strings.Join(pathArr, ""), method, emptySlice}
+		s.paths[singlePath] = path{strings.Join(pathArr, ""), method, emptySlice}
 
 		if index+1 < len(pathArr) {
-			insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
+			s.insertPath(paths[singlePath].subPaths, pathArr, index+1, method)
 		}
 
 	}
@@ -113,10 +105,10 @@ func checkPathParams(singlePath string) string {
 }
 
 // FindCorrectPath - Find the correct path to asscociate with a request url
-func FindCorrectPath(path string, method string) string {
+func (s *Server) findCorrectPath(path string, method string) string {
 	path = strings.ToLower(path)
 	pathArr := formatPath(path)
-	currentPath := Paths
+	currentPath := s.paths
 	lastMatch := "/"
 
 	for i := 0; i < len(pathArr); i++ {
@@ -139,12 +131,12 @@ func FindCorrectPath(path string, method string) string {
 	return lastMatch
 }
 
-func FindStaticServer(path string) fileServerPath {
+func (s *Server) findStaticServer(path string) fileServerPath {
 
-	for i := 0; i < len(fileServerPaths); i++ {
-		sPath := fileServerPaths[i].path
+	for i := 0; i < len(s.fileServerPaths); i++ {
+		sPath := s.fileServerPaths[i].path
 		if path[0:len(sPath)] == sPath {
-			return fileServerPaths[i]
+			return s.fileServerPaths[i]
 		}
 	}
 
