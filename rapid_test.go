@@ -101,5 +101,5 @@ func TestFailures(t *testing.T) {
 		c.Send("Hello World 2")
 	})
 
-	app.Listen(3000)
+	//app.Listen(3000)
 }
