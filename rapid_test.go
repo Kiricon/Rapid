@@ -80,6 +80,11 @@ func TestServer(t *testing.T) {
 		t.Fatal(staticerr)
 	}
 
+	_, wrongerr := http.NewRequest("GET", "http://localhost:3000/wrong/wrong", nil)
+	if wrongerr != nil {
+		t.Fatal(wrongerr)
+	}
+
 	time.Sleep(3 * time.Second)
 
 	app.Shutdown()
