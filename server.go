@@ -109,7 +109,7 @@ func (s *Server) ListenAndWait(port int, wait bool) {
 	}
 }
 
-// ShutdownServer - Gracefully shut down the server and unblock
+// Shutdown - Gracefully shut down the server and unblock
 // the server thread.
 func (s *Server) Shutdown() {
 	s.wg.Done()
