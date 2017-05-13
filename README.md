@@ -33,16 +33,19 @@ With a syntax and routing system inspired by Express.js, Flask & Laravel, develo
 package main
 
 import (
-	r "github.com/Kiricon/Rapid"
+	"github.com/Kiricon/Rapid"
 )
 
 func main() {
 
-    r.Get("/", func(c r.Connection) {
+    app := rapid.App()
+
+    app.Get("/", func(c rapid.Connection) {
         c.Send("Hello World")
     })
 
-	r.Listen(3000)
+
+    app.Listen(3000)
 }
 ```
 
