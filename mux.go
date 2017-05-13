@@ -1,7 +1,9 @@
 package rapid
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -81,6 +83,10 @@ func (s *Server) addPath(pathString string, handler func(Connection), method str
 	s.insertPath(s.paths, pathArr, 0, method)
 	if s.pathHandlers[pathString] == nil {
 		s.pathHandlers[pathString] = make(map[string]func(Connection))
+	}
+	if _, ok := s.pathHandlers[pathString][method]; ok {
+		fmt.Println("Path: " + pathString + " - " + method + " is already registred.")
+		os.Exit(0)
 	}
 	s.pathHandlers[pathString][method] = handler
 

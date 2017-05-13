@@ -84,3 +84,17 @@ func TestServer(t *testing.T) {
 
 	app.Shutdown()
 }
+
+func TestFailures(t *testing.T) {
+	app := App()
+
+	app.Get("/", func(c Connection) {
+		c.Send("Hello World")
+	})
+
+	app.Get("/", func(c Connection) {
+		c.Send("Hello World 2")
+	})
+
+	app.Listen(3000)
+}
