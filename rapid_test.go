@@ -41,7 +41,7 @@ func TestServer(t *testing.T) {
 		c.Redirect("/hello")
 	})
 
-	app.StaticFolder("static", "public")
+	app.StaticFolder("static", "./demo/public")
 
 	app.ListenAndWait(3000, false)
 
@@ -73,6 +73,11 @@ func TestServer(t *testing.T) {
 	_, deleteerr := http.NewRequest("DELETE", "http://localhost:3000/delete", nil)
 	if deleteerr != nil {
 		t.Fatal(deleteerr)
+	}
+
+	_, staticerr := http.NewRequest("GET", "http://localhost:3000/static/css/app.css", nil)
+	if staticerr != nil {
+		t.Fatal(staticerr)
 	}
 
 	time.Sleep(3 * time.Second)
