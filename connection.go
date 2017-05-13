@@ -11,6 +11,7 @@ type Connection struct {
 	R      *http.Request
 	W      http.ResponseWriter
 	Params map[string]string
+	server *Server
 }
 
 // Send - Return plain text string back to http request
@@ -34,4 +35,9 @@ func (c *Connection) Render(path string, object interface{}) {
 // Redirect - Redirect a request to another rest end point
 func (c *Connection) Redirect(path string) {
 	http.Redirect(c.W, c.R, path, 301)
+}
+
+// NotFound - Return 404 message to user
+func (c *Connection) NotFound() {
+	fmt.Fprintf(c.W, c.server.notFoundMessage)
 }

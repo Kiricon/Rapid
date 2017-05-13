@@ -42,6 +42,10 @@ func main() {
 		c.Redirect("/hello")
 	})
 
+	app.Get("/NotFound", func(c rapid.Connection) {
+		c.NotFound()
+	})
+
 	//app.StaticFolder("/", "public")
 
 	app.ListenAndWait(3000, false)

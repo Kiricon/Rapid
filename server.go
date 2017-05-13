@@ -1,7 +1,6 @@
 package rapid
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -14,20 +13,21 @@ type rapidHandler struct {
 }
 
 func (h rapidHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	conn := Connection{W: w, R: r, server: h.server}
 	correctPath := h.server.findCorrectPath(r.URL.Path, r.Method)
 	if correctPath != "404" {
 		params := getParams(correctPath, r.URL.Path)
 
 		if _, ok := h.server.pathHandlers[correctPath][r.Method]; ok {
-			h.server.pathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params})
+			h.server.pathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params, server: h.server})
 		} else if _, ok := h.server.pathHandlers[correctPath]["ALL"]; ok {
-			h.server.pathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params})
+			h.server.pathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params, server: h.server})
 		} else {
 			fileServer := h.server.findStaticServer(r.URL.Path)
 			if fileServer.path != "" {
 				h.server.staticServerHandler(fileServer)(Connection{R: r, W: w})
 			} else {
-				fmt.Fprintf(w, "404 Not Found - 1")
+				conn.NotFound()
 			}
 		}
 	} else {
@@ -35,7 +35,7 @@ func (h rapidHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if fileServer.path != "" {
 			h.server.staticServerHandler(fileServer)(Connection{R: r, W: w})
 		} else {
-			fmt.Fprintf(w, "404 Not Found - 2")
+			conn.NotFound()
 		}
 	}
 }
@@ -48,6 +48,7 @@ type Server struct {
 	wg              sync.WaitGroup
 	handler         rapidHandler
 	fileServerPaths []fileServerPath
+	notFoundMessage string
 }
 
 // Get - Create http GET rest endpoint
