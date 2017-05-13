@@ -8,41 +8,42 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	Get("/", func(c Connection) {
+	app := App()
+	app.Get("/", func(c Connection) {
 		fmt.Println("GET:/")
 		c.View("./demo/index.html")
 	})
 
-	Put("/put", func(c Connection) {
+	app.Put("/put", func(c Connection) {
 		fmt.Println("PUT:/put")
 		c.Send("Hello")
 	})
 
-	Post("/post", func(c Connection) {
+	app.Post("/post", func(c Connection) {
 		fmt.Println("POST:/post")
 		c.Send("Hello")
 	})
 
-	Delete("/delete", func(c Connection) {
+	app.Delete("/delete", func(c Connection) {
 		fmt.Println("DELETE:/Delete")
 		c.Send("Hello")
 	})
 
-	Route("/hello/:FirstName/:LastName", func(c Connection) {
+	app.Route("/hello/:FirstName/:LastName", func(c Connection) {
 		c.Render("./demo/test2.html", c.Params)
 	})
 
-	Route("/hello", func(c Connection) {
+	app.Route("/hello", func(c Connection) {
 		c.Send("Testing")
 	})
 
-	Route("/blah", func(c Connection) {
+	app.Route("/blah", func(c Connection) {
 		c.Redirect("/hello")
 	})
 
-	StaticFolder("static", "public")
+	app.StaticFolder("static", "public")
 
-	ListenAndWait(3000, false)
+	app.ListenAndWait(3000, false)
 
 	_, gerr := http.Get("http://localhost:3000/")
 	if gerr != nil {
@@ -76,5 +77,5 @@ func TestServer(t *testing.T) {
 
 	time.Sleep(3 * time.Second)
 
-	ShutdownServer()
+	app.Shutdown()
 }
