@@ -44,5 +44,13 @@ func main() {
 
 	//app.StaticFolder("/", "public")
 
-	app.Listen(3000)
+	app.ListenAndWait(3000, false)
+
+	app2 := rapid.App()
+
+	app2.Get("/", func(c rapid.Connection) {
+		c.Send("Server Two")
+	})
+
+	app2.Listen(3001)
 }

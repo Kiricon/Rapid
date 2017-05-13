@@ -95,7 +95,7 @@ func (s *Server) Listen(port int) {
 func (s *Server) ListenAndWait(port int, wait bool) {
 	portString := strconv.Itoa(port)
 	s.handler.server = s
-	fmt.Println(s.handler.server.paths)
+
 	s.srv = &http.Server{Addr: ":" + portString, Handler: s.handler}
 
 	go func() {
