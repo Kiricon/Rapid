@@ -21,7 +21,7 @@ With a syntax and routing system inspired by Express.js, Flask & Laravel, develo
 
 <h2 align="center">Install Rapid</h2>
 <p align="center">
-<code align="center">go get https://github.com/Kiricon/Rapid</code>
+<code align="center">go get github.com/Kiricon/Rapid</code>
 </p>
 
 <br/>
