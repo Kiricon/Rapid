@@ -24,5 +24,5 @@ func main() {
 		app.Listen(3000)
 	*/
 
-	fmt.Println(templating.Template("temp.html"))
+	fmt.Println(templating.AddPartial("temp.html"))
 }
