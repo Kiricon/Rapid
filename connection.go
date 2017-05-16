@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/Kiricon/Rapid/templating"
 )
 
 // Connection - struct for handling http request and write
@@ -30,7 +32,8 @@ func (c *Connection) View(path string) {
 // Templating uses standard library templating
 func (c *Connection) Render(path string, object interface{}) {
 
-	t, _ := template.ParseFiles(path)
+	fileString := templating.AddPartial(path)
+	t, _ := template.New("blah").Parse(fileString)
 	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
 	t.Execute(c.W, object)
 }
