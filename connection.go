@@ -14,7 +14,7 @@ type Connection struct {
 	R      *http.Request
 	W      http.ResponseWriter
 	Params map[string]string
-	Json   interface{}
+	JSON   interface{}
 	server *Server
 }
 

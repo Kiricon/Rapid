@@ -27,9 +27,9 @@ func (h rapidHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if _, ok := h.server.pathHandlers[correctPath][r.Method]; ok {
-			h.server.pathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params, server: h.server, Json: jsonObject})
+			h.server.pathHandlers[correctPath][r.Method](Connection{R: r, W: w, Params: params, server: h.server, JSON: jsonObject})
 		} else if _, ok := h.server.pathHandlers[correctPath]["ALL"]; ok {
-			h.server.pathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params, server: h.server, Json: jsonObject})
+			h.server.pathHandlers[correctPath]["ALL"](Connection{R: r, W: w, Params: params, server: h.server, JSON: jsonObject})
 		} else {
 			fileServer := h.server.findStaticServer(r.URL.Path)
 			if fileServer.path != "" {

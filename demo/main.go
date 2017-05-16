@@ -15,10 +15,10 @@ func main() {
 	})
 
 	app.Post("/post", func(c rapid.Connection) {
-		if c.Json != nil {
-			fmt.Println(c.Json)
+		if c.JSON != nil {
+			fmt.Println(c.JSON)
 		}
-		c.SendJSON(c.Json)
+		c.SendJSON(c.JSON)
 	})
 
 	app.StaticFolder("/", "public")
