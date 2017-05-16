@@ -29,6 +29,7 @@ func (c *Connection) View(path string) {
 // Render - Render HTML view with templating
 // Templating uses standard library templating
 func (c *Connection) Render(path string, object interface{}) {
+
 	t, _ := template.ParseFiles(path)
 	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
 	t.Execute(c.W, object)
