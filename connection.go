@@ -32,7 +32,7 @@ func (c *Connection) View(path string) {
 // Templating uses standard library templating
 func (c *Connection) Render(path string, object interface{}) {
 
-	fileString := templating.AddPartial(path)
+	fileString := templating.AddPartial(c.server.viewPrefix + path)
 	t, _ := template.New("blah").Parse(fileString)
 	c.W.Header().Set("Content-Type", "text/html; charset=utf-8")
 	t.Execute(c.W, object)

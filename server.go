@@ -58,6 +58,7 @@ type Server struct {
 	fileServerPaths []fileServerPath
 	notFoundMessage string
 	notFoundPage    string
+	viewPrefix      string
 }
 
 // Get - Create http GET rest endpoint
@@ -92,6 +93,11 @@ func (s *Server) createRoute(path string, handler routeHandler, method string) {
 // StaticFolder - Specify application public/static folder
 func (s *Server) StaticFolder(path string, dir string) {
 	s.addStaticPath(path, dir)
+}
+
+// ViewFolder - Specifiy root folder to look for views/html files
+func (s *Server) ViewFolder(path string) {
+	s.viewPrefix = path
 }
 
 // Listen - Start webserver on specified port
